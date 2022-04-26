@@ -1,7 +1,7 @@
 FROM tomcat:8.5.20
 
 # Maintainer
-MAINTAINER nm2564@nyu.edu
+MAINTAINER yz7787@nyu.edu
 
 # Copy tomcat-users.xml
 ADD tomcat-users.xml /usr/local/tomcat/conf/
@@ -10,11 +10,11 @@ ADD tomcat-users.xml /usr/local/tomcat/conf/
 ADD catalina.sh /usr/local/tomcat/bin/
 
 # Copy JAR
-ADD fortress-realm-proxy-2.0.0-RC1.jar /usr/local/tomcat/lib/
+ADD fortress-realm-proxy-2.0.7.jar /usr/local/tomcat/lib/
 
 # Copy images to tomcat path
 ADD fortress-rest.war /usr/local/tomcat/webapps/
-ADD fortress-web.war /usr/local/tomcat/webapps/
+ADD fortress-web-2.0.7.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
 
