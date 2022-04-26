@@ -19,5 +19,5 @@ ADD fortress-web-2.0.7.war /usr/local/tomcat/webapps/
 EXPOSE 8080
 
 # Start the Service
-RUN chmod +x /usr/local/tomcat/bin/startup.sh
-CMD ["/usr/local/tomcat/bin/startup.sh", "run"]
+RUN chmod +x /usr/local/tomcat/bin/catalina.sh
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
