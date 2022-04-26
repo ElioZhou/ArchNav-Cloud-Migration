@@ -1,5 +1,5 @@
 # Tomcatdocker
-A custom build for to install Fortress-WEB and Fortress-REST on Docker - Be sure to edit fortress.properties!
+A custom build for to install Fortress-WEB and Fortress-REST on Docker - Be sure to *edit fortress.properties!*
 
 # Step1: Config ApacheDS using Docker
 -------------------------------------------------------------------------------
