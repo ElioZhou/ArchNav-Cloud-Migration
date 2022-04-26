@@ -1,5 +1,6 @@
-# tomcatdocker
+# Tomcatdocker
 A custom build for to install Fortress-WEB and Fortress-REST on Docker - Be sure to edit fortress.properties!
+
 # Step1: Config ApacheDS using Docker
 -------------------------------------------------------------------------------
 ## SECTION 1. Prerequisites
@@ -415,7 +416,7 @@ During this section, you will be asked to setup Apache Fortress Rest Application
  ```
  cp ../[FORTRESS-CORE-HOME]/config/fortress.properties src/main/resources
  ```
-
+ *Make sure to change the host!
  *where FORTRESS-CORE-HOME is package location on your machine*
 
 3. Build, perform fortress rest test policy load and deploy to Tomcat:
@@ -461,7 +462,7 @@ During this section, you will be asked to setup Apache Fortress Web Application
  ```
  cp ../[FORTRESS-CORE-HOME]/config/fortress.properties src/main/resources
  ```
-
+ *Make sure to change the host!
  *where FORTRESS-CORE-HOME is package location on your machine*
 
 3. Build, perform fortress web test policy load and deploy to Tomcat:
