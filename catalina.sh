@@ -100,8 +100,6 @@
 #                   case the default is "true"
 # -----------------------------------------------------------------------------
 
-JAVA_OPTS="$JAVA_OPTS -Dfortress.admin.user=uid=admin,ou=system -Dfortress.admin.pw=secret -Dfortress.config.root=ou=Config,dc=example,dc=com -Dfortress.port=10389"
-
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false
 darwin=false
