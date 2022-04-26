@@ -1,6 +1,6 @@
 # tomcatdocker
 A custom build for to install Fortress-WEB and Fortress-REST on Docker - Be sure to edit fortress.properties!
-# Steps
+# Step1: Config ApacheDS using Docker
 -------------------------------------------------------------------------------
 ## SECTION 1. Prerequisites
 
@@ -286,3 +286,220 @@ docker rm apacheds
 
 ____________________________________________________________________________________
 #### END OF README-QUICKSTART-DOCKER-APACHEDS
+# Step2: Config Fortress App
+___________________________________________________________________________________
+## SECTION 5. Apache Tomcat Setup
+
+During this section, you will be asked to setup Apache Tomcat 8 and prepare for usage with Apache Fortress
+
+1. Download and prepare the package:
+
+ ```
+ wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.30/bin/apache-tomcat-8.0.30.tar.gz
+ tar -xvf apache-tomcat-8.0.30.tar.gz
+ sudo mv apache-tomcat-8.0.30 /usr/local/tomcat8
+ ```
+ *Change the tomcat version as neeeded - v7 and beyond are ok.*
+ *For BSD variants (i.e. Mac) append /* to the folder name above on mv command.*
+
+2. Download the fortress realm proxy jar into tomcat/lib folder:
+
+  ```
+  sudo wget https://repo.maven.apache.org/maven2/org/apache/directory/fortress/fortress-realm-proxy/2.0.7/fortress-realm-proxy-2.0.7.jar -P /usr/local/tomcat8/lib
+  ```
+
+3. Prepare tomcat fortress usage:
+
+ ```
+ sudo vi /usr/local/tomcat8/conf/tomcat-users.xml
+ ```
+
+4. Add tomcat user to deploy fortress:
+
+ ```
+ <role rolename="manager-script"/>
+ <role rolename="manager-gui"/>
+ <user username="tcmanager" password="m@nager123" roles="manager-script"/>
+ <user username="tcmanagergui" password="m@nager123" roles="manager-gui"/>
+ ```
+
+5. Save and exit tomcat-users.xml file
+
+6. Configure Tomcat as a service (optional)
+
+ a. Edit the config file:
+
+ ```
+ vi /etc/init.d/tomcat
+ ```
+
+ b. Add the following:
+
+ ```
+ #!/bin/bash
+ # description: Tomcat Start Stop Restart
+ # processname: tomcat
+ # chkconfig: 234 20 80
+ CATALINA_HOME=/usr/local/tomcat8
+ case $1 in
+ start)
+ sh $CATALINA_HOME/bin/startup.sh
+ ;;
+ stop)
+ sh $CATALINA_HOME/bin/shutdown.sh
+ ;;
+ restart)
+ sh $CATALINA_HOME/bin/shutdown.sh
+ sh $CATALINA_HOME/bin/startup.sh
+ ;;
+ esac
+ exit 0
+ ```
+
+ c. Add the init script to startup for run level 2, 3 and 4:
+
+ ```
+ cd /etc/init.d
+ chmod 755 tomcat
+ chkconfig --add tomcat
+ chkconfig --level 234 tomcat on
+ ```
+
+7. Start tomcat server:
+
+ a. If running Tomcat as a service:
+
+ ```
+ service tomcat start
+ ```
+
+ b. Else
+
+ ```
+ sudo /usr/local/tomcat8/bin/startup.sh
+ ```
+
+8.  Verify clean logs after startup:
+
+ ```
+ tail -f -n10000 /usr/local/tomcat8/logs/catalina.out
+ ```
+
+9.  Verify setup by signing onto the Tomcat Manager app with credentials userId: tcmanagergui, password: m@nager123
+
+ ```
+ http://hostname:8080/manager
+ ```
+___________________________________________________________________________________
+## SECTION 6. Apache Fortress Rest Setup
+
+During this section, you will be asked to setup Apache Fortress Rest Application
+
+1. Download the package:
+
+ a. from git:
+ ```
+ git clone --branch 2.0.7  https://gitbox.apache.org/repos/asf/directory-fortress-enmasse.git
+ cd directory-fortress-enmasse
+ ```
+
+ b. or download package:
+ ```
+ wget https://www.apache.org/dist/directory/fortress/dist/2.0.7/fortress-rest-2.0.7-source-release.zip
+ unzip fortress-rest-2.0.7-source-release.zip
+ cd fortress-rest-2.0.7
+ ```
+
+2. Prepare:
+
+ ```
+ cp ../[FORTRESS-CORE-HOME]/config/fortress.properties src/main/resources
+ ```
+
+ *where FORTRESS-CORE-HOME is package location on your machine*
+
+3. Build, perform fortress rest test policy load and deploy to Tomcat:
+
+ ```
+ mvn clean install -Dload.file=./src/main/resources/FortressRestServerPolicy.xml tomcat:deploy
+ ```
+
+4. Redeploy (if need be):
+
+ ```
+ mvn tomcat:redeploy
+ ```
+
+5. Smoke test:
+
+ ```
+ mvn test -Dtest=EmTest
+ ```
+
+___________________________________________________________________________________
+## SECTION 7. Apache Fortress Web Setup
+
+During this section, you will be asked to setup Apache Fortress Web Application
+
+1. Download the package:
+
+ a. from git:
+ ```
+ git clone --branch 2.0.7  https://gitbox.apache.org/repos/asf/directory-fortress-commander.git
+ cd directory-fortress-commander
+ ```
+
+ b. or download package:
+ ```
+ wget https://www.apache.org/dist/directory/fortress/dist/2.0.7/fortress-web-2.0.7-source-release.zip
+ unzip fortress-web-2.0.7-source-release.zip
+ cd fortress-web-2.0.7
+ ```
+
+2. Prepare:
+
+ ```
+ cp ../[FORTRESS-CORE-HOME]/config/fortress.properties src/main/resources
+ ```
+
+ *where FORTRESS-CORE-HOME is package location on your machine*
+
+3. Build, perform fortress web test policy load and deploy to Tomcat:
+
+ ```
+ mvn clean install -Dload.file=./src/main/resources/FortressWebDemoUsers.xml tomcat:deploy
+ ```
+
+4. Redeploy (if need be):
+
+ ```
+ mvn tomcat:redeploy
+ ```
+
+5. Open browser and test (creds: test/password):
+
+ ```
+ http://hostname:8080/fortress-web
+ ```
+
+6. Click on the links, to pull up various views on the data stored in the directory.
+
+7. Run the Selenium Web driver integration tests with Firefox (default):
+
+ ```
+ mvn test -Dtest=FortressWebSeleniumITCase
+ ```
+
+8. Run the tests using Chrome:
+
+ ```
+ mvn test -Dtest=FortressWebSeleniumITCase -Dweb.driver=chrome
+ ```
+
+ Note: The Selenium tests require that:
+ * Either Firefox or Chrome installed to target machine.
+ * **FORTRESS_CORE_HOME**/*FortressJUnitTest* successfully run.  This will load some test data to grind on.
+ * [FortressWebDemoUsers](./src/main/resources/FortressWebDemoUsers.xml) policy loaded into target LDAP server.
+
+___________________________________________________________________________________
+#### END OF README-QUICKSTART-APACHEDS
