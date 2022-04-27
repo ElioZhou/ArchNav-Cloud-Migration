@@ -1,6 +1,13 @@
 # Tomcatdocker
 A custom build for to install Fortress-WEB and Fortress-REST on Docker - Be sure to **edit fortress.properties!**
-The website is http://54.145.198.173:8080/fortress-web-2.0.7
+The website is
+
+http://15.223.0.6:8080/fortress-web-2.0.7/wicket/bookmarkable/org.apache.directory.fortress.web.ObjectPage?3
+
+`sudo docker build -t fortress:v1.0 .`
+
+`sudo docker run -itd --name=fortress -p 8080:8080 fortress:v1.0`
+
 
 # Step1: Config ApacheDS using Docker
 -------------------------------------------------------------------------------
