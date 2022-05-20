@@ -6,7 +6,7 @@ http://54.145.198.173:8080/fortress-web-2.0.7/
 
 `sudo docker build -t fortress:v1.0 .`
 
-`sudo docker run -itd --name=fortress -p 8080:8080 fortress:v1.0`
+`sudo docker run -itd --name=fortress -p 8080:8080 fortress:v1.1`
 
 
 # Step1: Config ApacheDS using Docker
